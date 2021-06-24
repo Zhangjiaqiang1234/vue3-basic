@@ -2,13 +2,27 @@
   <div class="container">
     <!-- 导航栏 -->
     <global-header :user="currentUser"></global-header>
+    <!-- 表单验证内容 -->
+    <form action="">
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">邮箱地址</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" v-model="emailRef.val" @blur="validateEmail" />
+        <!-- 错误文字 -->
+        <div class="form-text" v-if="emailRef.error">{{ emailRef.message }}</div>
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">密码</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" />
+      </div>
+    </form>
+
     <!-- 卡片列表 -->
     <column-list :list="list"></column-list>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, reactive } from 'vue'
 // npm install bootstrap@next --save 可以安装体验版尝鲜
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumProps } from './components/ColumnList.vue'
@@ -47,6 +61,8 @@ const testData: ColumProps[] = [
       'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_150,w_150'
   }
 ]
+// 邮箱验证正则表达式
+const emailReg = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 export default defineComponent({
   name: 'App',
   components: {
@@ -54,9 +70,30 @@ export default defineComponent({
     GlobalHeader
   },
   setup() {
+    /** 邮箱相关属性 */
+    const emailRef = reactive({
+      val: '',
+      error: false,
+      message: ''
+    })
+    /** 验证邮箱是否符合规则 */
+    const validateEmail = () => {
+      if (emailRef.val.trim() === '') {
+        // 邮箱内容为空
+        emailRef.error = true
+        emailRef.message = 'can not be empty'
+      } else if (!emailReg.test(emailRef.val)) {
+        // 邮箱不符合格式
+        emailRef.error = true
+        emailRef.message = 'should be valid email'
+      }
+    }
+
     return {
       list: testData,
-      currentUser
+      currentUser,
+      emailRef,
+      validateEmail
     }
   }
 })
