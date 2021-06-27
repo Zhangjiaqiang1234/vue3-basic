@@ -3,18 +3,29 @@
     <!-- 导航栏 -->
     <global-header :user="currentUser"></global-header>
     <!-- 表单验证内容 -->
-    <form action="">
+    <validate-form @form-submit="onFormSubmit" ref="formRef">
       <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">邮箱地址</label>
-        <input type="email" class="form-control" id="exampleInputEmail1" v-model="emailRef.val" @blur="validateEmail" />
-        <!-- 错误文字 -->
-        <div class="form-text" v-if="emailRef.error">{{ emailRef.message }}</div>
+        <label class="form-label">邮箱地址</label>
+        <validate-input
+          v-model="emailVal"
+          :rules="emailRules"
+          placeholder="请输入邮箱地址"
+          ref="inputRef"
+        ></validate-input>
       </div>
       <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">密码</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" />
+        <label class="form-label">密码</label>
+        <validate-input
+          type="password"
+          v-model="passwordVal"
+          :rules="passwordRules"
+          placeholder="请输入密码"
+        ></validate-input>
       </div>
-    </form>
+      <template #submit>
+        <span class="btn btn-danger">Submit</span>
+      </template>
+    </validate-form>
 
     <!-- 卡片列表 -->
     <column-list :list="list"></column-list>
@@ -22,10 +33,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
-// npm install bootstrap@next --save 可以安装体验版尝鲜
+import { defineComponent, reactive, ref } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumProps } from './components/ColumnList.vue'
+import ValidateInput, { RulesProp } from './components/ValidateInput.vue'
+import ValidateForm from './components/ValidateForm.vue'
 import GlobalHeader, { UserProps } from './components/GlobalHeader.vue'
 const currentUser: UserProps = {
   isLogin: true,
@@ -67,33 +79,63 @@ export default defineComponent({
   name: 'App',
   components: {
     ColumnList,
-    GlobalHeader
+    GlobalHeader,
+    ValidateInput,
+    ValidateForm
   },
   setup() {
+    const inputRef = ref<any>()
+    const formRef = ref<any>()
+    const emailVal = ref('')
+    // 定义邮箱的验证规则
+    const emailRules: RulesProp = [
+      { type: 'required', message: '电子邮箱地址不能为空' },
+      { type: 'email', message: '请输入正确的电子邮箱格式' }
+    ]
+    const passwordVal = ref('')
+    const passwordRules: RulesProp = [
+      { type: 'required', message: '密码不能为空' },
+      {
+        type: 'range',
+        message: '',
+        min: {
+          message: '密码不能少于5位',
+          length: 5
+        },
+        max: {
+          message: '密码不能大于10位',
+          length: 10
+        }
+      }
+    ]
+    // 当触发表单提交
+    const onFormSubmit = (result: boolean) => {
+      console.log('result', result)
+      if (result) {
+        // 模拟请求失败
+        console.log('请求失败')
+        formRef.value.clearInputs()
+      }
+    }
+
     /** 邮箱相关属性 */
     const emailRef = reactive({
       val: '',
       error: false,
       message: ''
     })
-    /** 验证邮箱是否符合规则 */
-    const validateEmail = () => {
-      if (emailRef.val.trim() === '') {
-        // 邮箱内容为空
-        emailRef.error = true
-        emailRef.message = 'can not be empty'
-      } else if (!emailReg.test(emailRef.val)) {
-        // 邮箱不符合格式
-        emailRef.error = true
-        emailRef.message = 'should be valid email'
-      }
-    }
 
     return {
       list: testData,
       currentUser,
       emailRef,
-      validateEmail
+      emailVal,
+      emailRules,
+      passwordVal,
+      passwordRules,
+      onFormSubmit,
+      inputRef,
+      formRef
     }
   }
 })
