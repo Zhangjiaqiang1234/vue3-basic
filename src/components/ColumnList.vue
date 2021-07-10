@@ -1,3 +1,4 @@
+<!-- 展示列表组件 -->
 <template>
   <div class="row">
     <div v-for="column in columnList" :key="column.id" class="col-4 mb-4">
@@ -18,12 +19,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue'
-export interface ColumnProps {
-  id: number
-  title: string
-  avatar?: string
-  description: string
-}
+import { ColumnProps } from '../testData'
 export default defineComponent({
   name: 'ColumnList',
   props: {

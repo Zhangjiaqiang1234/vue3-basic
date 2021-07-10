@@ -1,6 +1,7 @@
 <template>
   <div class="home-page">
     <!-- 开始写文章区域 -->
+    <h2>{{ biggerColumnLen }}</h2>
     <section class="py-5 text-center container">
       <div class="row py-lg-5">
         <div class="col-lg-6 col-md-8 mx-auto">
@@ -20,45 +21,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import ColumnList, { ColumnProps } from '../components/ColumnList.vue'
-const testData: ColumnProps[] = [
-  {
-    id: 1,
-    title: 'test1的专栏',
-    description: '这是test1专栏，有一段非常有意思的简介，可以更新一下欧',
-    avatar:
-      'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_150,w_150'
-  },
-  {
-    id: 2,
-    title: 'test2的专栏',
-    description: '这是test2专栏，有一段非常有意思的简介，可以更新一下欧',
-    avatar:
-      'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_150,w_150'
-  },
-  {
-    id: 3,
-    title: 'test2的专栏',
-    description: '这是test2专栏，有一段非常有意思的简介，可以更新一下欧',
-    avatar: ''
-  },
-  {
-    id: 4,
-    title: 'test2的专栏',
-    description: '这是test2专栏，有一段非常有意思的简介，可以更新一下欧',
-    avatar:
-      'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_150,w_150'
-  }
-]
+import { defineComponent, computed } from 'vue'
+import { useStore } from 'vuex'
+import { GlobalDataProps } from '../store'
+import ColumnList from '../components/ColumnList.vue'
 export default defineComponent({
   name: 'Home',
   components: {
     ColumnList
   },
   setup() {
+    // 为了获取代码自动补全，这里引入泛型
+    const store = useStore<GlobalDataProps>()
+    const list = computed(() => store.state.columns)
+    const biggerColumnLen = computed(() => store.getters.biggerColumnLen)
     return {
-      list: testData
+      list,
+      biggerColumnLen
     }
   }
 })

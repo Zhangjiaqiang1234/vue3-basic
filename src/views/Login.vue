@@ -34,6 +34,7 @@ import ValidateInput, { RulesProp } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
 import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default defineComponent({
   name: 'Login',
@@ -43,6 +44,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter()
+    const store = useStore()
 
     const emailVal = ref('')
     const emailRules: RulesProp = [
@@ -55,12 +57,8 @@ export default defineComponent({
     // 当点击登录时
     const onFormSubmit = (result: boolean) => {
       if (result) {
-        router.push({
-          name: 'column',
-          params: {
-            id: 1
-          }
-        })
+        router.push('/')
+        store.commit('login')
       }
     }
     return {
