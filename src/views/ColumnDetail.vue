@@ -15,10 +15,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { GlobalDataProps } from '../store'
 import { useStore } from 'vuex'
+import { GlobalDataProps } from '../store'
 import PostList from '../components/PostList.vue'
 export default defineComponent({
   name: 'ColumnDetail',

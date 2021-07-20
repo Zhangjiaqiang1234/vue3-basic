@@ -2,6 +2,7 @@
   <div class="validate-input-container pb-3">
     <!-- 输入框 -->
     <input
+      v-if="tag !== 'textarea'"
       class="form-control"
       :class="{ 'is-invalid': inputRef.error }"
       :value="inputRef.val"
@@ -9,6 +10,15 @@
       @input="updateValue"
       v-bind="$attrs"
     />
+    <textarea
+      v-else
+      class="form-control"
+      :class="{ 'is-invalid': inputRef.error }"
+      :value="inputRef.val"
+      @blur="validateInput"
+      @input="updateValue"
+      v-bind="$attrs"
+    ></textarea>
     <!-- 错误文字提示 -->
     <span v-if="inputRef.error" class="invalid-feedback">{{ inputRef.message }}</span>
   </div>
@@ -20,8 +30,8 @@ import { emitter } from './ValidateForm.vue'
 import mitt from 'mitt'
 // 邮箱验证正则表达式
 const emailReg = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+// 验证规则接口
 interface RuleProp {
-  // 验证规则接口
   type: 'required' | 'email' | 'range' // 验证类型
   message?: string // 验证失败错误提示
   min?: {
@@ -36,12 +46,20 @@ interface RuleProp {
   }
 }
 export type RulesProp = RuleProp[]
+// 输入框类型：input单行文本框或textarea多行文本框
+export type TagType = 'input' | 'textarea'
 export default defineComponent({
   name: 'ValidateInput',
   props: {
     // 验证的规则列表
     rules: Array as PropType<RulesProp>,
-    modelValue: String
+    // 双向绑定的值
+    modelValue: String,
+    // 输入框类型
+    tag: {
+      type: String as PropType<TagType>,
+      default: 'input'
+    }
   },
   inheritAttrs: false, // 禁止继承Attribute
   setup(props, context) {

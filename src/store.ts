@@ -1,10 +1,14 @@
 import { createStore } from 'vuex'
 import { testData, testPosts, ColumnProps, PostProps } from './testData'
+export { ColumnProps, PostProps } from './testData'
+// 用户信息接口
 interface UserProps {
   isLogin: boolean // 是否登录
   name?: string // 用户名
   id?: number // 用户id
+  columnId?: number // 专栏id
 }
+// 全局数据Props接口
 export interface GlobalDataProps {
   columns: ColumnProps[]
   posts: PostProps[]
@@ -18,19 +22,24 @@ export interface ImageProps {
 }
 const store = createStore<GlobalDataProps>({
   state: {
+    // 专栏列表信息
     columns: testData,
+    // 文章详情信息
     posts: testPosts,
-    user: { isLogin: false }
+    // 用户信息
+    user: { isLogin: false, name: 'viking', columnId: 1 }
   },
   mutations: {
+    // 用户登录
     login(state) {
       state.user = { ...state.user, isLogin: true, name: 'viking' }
+    },
+    // 创建文章
+    createPost(state, newPost) {
+      state.posts.push(newPost)
     }
   },
   getters: {
-    biggerColumnLen(state) {
-      return state.columns.filter(c => c.id > 2).length
-    },
     // 通过id获取专栏
     getColumnById: state => (id: number) => {
       return state.columns.find(c => c.id === id)

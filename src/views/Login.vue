@@ -57,8 +57,8 @@ export default defineComponent({
     // 当点击登录时
     const onFormSubmit = (result: boolean) => {
       if (result) {
-        router.push('/')
         store.commit('login')
+        router.push('/')
       }
     }
     return {
